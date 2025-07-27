@@ -27,6 +27,5 @@ void initKeypad() {
 }
 
 char getKeyPressed() {
-  char key = keypad.getKey();
-  return key;
+  return keypad.getKey();
 }
