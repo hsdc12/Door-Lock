@@ -1,4 +1,4 @@
-#include "main.h"  // Or: #include "src/Lock/Lock.h" if you want to skip main.h
+#include "src/Lock/Lock.h"
 
 void setup() {
   pinMode(2, OUTPUT);  // Piezo
