@@ -1,58 +1,80 @@
-#include <Wire.h>
-#include <RTClib.h>
 #include <rgb_lcd.h>
+#include "main.h"
+#include <SPI.h>
+#include <MFRC522.h>
 
-RTC_DS3231 rtc;
+#define SS_PIN 10
+#define RST_PIN 9
+MFRC522 myRFID(SS_PIN, RST_PIN);   // Create MFRC522 instance.
+
 rgb_lcd lcd;
 
 void setup() {
-    Serial.begin(9600);
-    if (!rtc.begin()) {
-        Serial.println("RTC module not found!");
-        while (true);
-    }
-    if (rtc.lostPower()) {
-        rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
-    }
+  pinMode(2, OUTPUT);  // Piezo
+  pinMode(4, OUTPUT);  // Solenoid
+  pinMode(5, OUTPUT);  // green LED
+  pinMode(6, OUTPUT);  // red LED
+    lockdoor();
+
+  SPI.begin();      // Initiate  SPI bus
+  myRFID.PCD_Init();   // Initiate MFRC522
+
   lcd.begin(16, 2);
   lcd.setRGB(0, 128, 255); 
-  lcd.print("CHINGDOM INC");
-  delay(5000);
   lcd.clear();
 }
 
-void loop() {
-    float   tempC  = rtc.getTemperature();
-    lcd.setCursor(12, 0);
-    lcd.print("    "); // Clear previous temperature
-    lcd.setCursor(12, 0);
-    lcd.print(tempC, 0); // Print temperature in Celsius
-    lcd.write(0xDF); // Degree symbol
-    lcd.print("C");
-    //
-    //
-    //
-  DateTime now = rtc.now();
 
-  char dateBuf[9];   // "DD/MM/YY" + null
-  sprintf(dateBuf, "%02d/%02d/%02d",
-          now.day(),
-          now.month(),
-          now.year() % 100);
+void loop() 
+{
+  // Wait for RFID cards to be scanned
+  if ( ! myRFID.PICC_IsNewCardPresent()) 
+  {
 
-  char timeBuf[6];   // "HH:MM" + null
-  sprintf(timeBuf, "%02d:%02d",
-          now.hour(),
-          now.minute());
+    return;
+  }
+  // an RFID card has been scanned but no UID 
+  if ( ! myRFID.PICC_ReadCardSerial()) 
+  {
+    
+    return;
+  }
+  //Show UID on serial monitor
 
-  lcd.setCursor(0, 1);
-  lcd.print("                ");  // 16 spaces
+  String content= "";
+  for (byte i = 0; i < myRFID.uid.size; i++) {
+     content.concat(String(myRFID.uid.uidByte[i] < 0x10 ? " 0" : " "));
+     content.concat(String(myRFID.uid.uidByte[i], HEX));
+  }
+  content.toUpperCase();
+  if (content.substring(1) == "76 FE 31 02") //change here the UID of the card/cards that you want to give access
+  {
+    lcd.setCursor(0, 0);
+    lcd.print("           ");
+    lcd.setCursor(0, 0);   
+    lcd.print("Authorized!"); //clear any text previously displayed
 
-  lcd.setCursor(0, 1);           //prints date
-  lcd.print(dateBuf);
+    unlockdoor();
+    delay(4000); // Wait for 4 seconds
+    lockdoor();
 
-  lcd.setCursor(11, 1);          // Print time at bottom right (col 11)
-  lcd.print(timeBuf);
+    lcd.setCursor(0, 0);
+    lcd.print("           ");
+    lcd.setCursor(0, 0);   //clears the text after door lock cycle
+  }
+ 
+ else   {
+    lcd.setCursor(0, 0);
+    lcd.print("           ");
+    lcd.setCursor(0, 0);   
+    lcd.print("Denied!");
+    
+    tone(2, 200); // Beep for 4 seconds
+    delay(4000); // Wait for 4 seconds
+    noTone(2); // Stop beeping
 
-  delay(10000);
+    lcd.setCursor(0, 0);
+    lcd.print("           ");
+    lcd.setCursor(0, 0);  //clear text
+  }
 }
