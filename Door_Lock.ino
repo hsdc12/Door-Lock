@@ -1,18 +1,58 @@
-#include "main.h"  // Or: #include "src/Lock/Lock.h" if you want to skip main.h
+#include <Wire.h>
+#include <RTClib.h>
+#include <rgb_lcd.h>
+
+RTC_DS3231 rtc;
+rgb_lcd lcd;
 
 void setup() {
-  pinMode(2, OUTPUT);  // Piezo
-  pinMode(4, OUTPUT);  // Solenoid
-  pinMode(5, OUTPUT);  // green LED
-  pinMode(6, OUTPUT);  // red LED
-
-  lockdoor();          // Start with the door locked
+    Serial.begin(9600);
+    if (!rtc.begin()) {
+        Serial.println("RTC module not found!");
+        while (true);
+    }
+    if (rtc.lostPower()) {
+        rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
+    }
+  lcd.begin(16, 2);
+  lcd.setRGB(0, 128, 255); 
+  lcd.print("CHINGDOM INC");
+  delay(5000);
+  lcd.clear();
 }
 
 void loop() {
-  // Example: Unlock the door for 4 seconds every 10 seconds
-  unlockdoor();
-  delay(4000);         // Door unlocked for 4 seconds
-  lockdoor();
-  delay(6000);         // Door locked for 6 seconds
+    float   tempC  = rtc.getTemperature();
+    lcd.setCursor(12, 0);
+    lcd.print("    "); // Clear previous temperature
+    lcd.setCursor(12, 0);
+    lcd.print(tempC, 0); // Print temperature in Celsius
+    lcd.write(0xDF); // Degree symbol
+    lcd.print("C");
+    //
+    //
+    //
+  DateTime now = rtc.now();
+
+  char dateBuf[9];   // "DD/MM/YY" + null
+  sprintf(dateBuf, "%02d/%02d/%02d",
+          now.day(),
+          now.month(),
+          now.year() % 100);
+
+  char timeBuf[6];   // "HH:MM" + null
+  sprintf(timeBuf, "%02d:%02d",
+          now.hour(),
+          now.minute());
+
+  lcd.setCursor(0, 1);
+  lcd.print("                ");  // 16 spaces
+
+  lcd.setCursor(0, 1);           //prints date
+  lcd.print(dateBuf);
+
+  lcd.setCursor(11, 1);          // Print time at bottom right (col 11)
+  lcd.print(timeBuf);
+
+  delay(10000);
 }
