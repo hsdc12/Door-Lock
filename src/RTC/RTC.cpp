@@ -6,7 +6,7 @@
 
 RTC_DS3231 rtc;
 
-rgb_lcd lcd; // Declare the rgb_lcd object
+extern rgb_lcd lcd; // Declare the rgb_lcd object
 
 void TimeDateTempsetup() {
     rtc.begin();
