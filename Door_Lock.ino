@@ -10,11 +10,6 @@ MFRC522 myRFID(SS_PIN, RST_PIN);   // Create MFRC522 instance.
 rgb_lcd lcd;
 
 void setup() {
-  pinMode(2, OUTPUT);  // Piezo
-  pinMode(4, OUTPUT);  // Solenoid
-  pinMode(5, OUTPUT);  // green LED
-  pinMode(6, OUTPUT);  // red LED
-    lockdoor();
 
   SPI.begin();      // Initiate  SPI bus
   myRFID.PCD_Init();   // Initiate MFRC522
@@ -22,6 +17,8 @@ void setup() {
   lcd.begin(16, 2);
   lcd.setRGB(0, 128, 255); 
   lcd.clear();
+  TimeDateTempsetup();
+  setupLock();  // Initialize the lock system
 }
 
 
@@ -77,4 +74,8 @@ void loop()
     lcd.print("           ");
     lcd.setCursor(0, 0);  //clear text
   }
+}
+
+void loop() {
+    TimeDateTempvoid();
 }
