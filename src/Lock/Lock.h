@@ -3,5 +3,6 @@
 
 void lockdoor();
 void unlockdoor();
+void setupLock();
 
 #endif
