@@ -1,13 +1,13 @@
-#include <rgb_lcd.h>
 #include "main.h"
 #include <SPI.h>
 #include <MFRC522.h>
+#include <rgb_lcd.h>
 
 #define SS_PIN 10
 #define RST_PIN 9
 MFRC522 myRFID(SS_PIN, RST_PIN);   // Create MFRC522 instance.
 
-rgb_lcd lcd;
+extern rgb_lcd lcd;
 
 void setup() {
 
@@ -24,6 +24,9 @@ void setup() {
 
 void loop() 
 {
+  TimeDateTempvoid();
+
+
   // Wait for RFID cards to be scanned
   if ( ! myRFID.PICC_IsNewCardPresent()) 
   {
@@ -66,16 +69,13 @@ void loop()
     lcd.setCursor(0, 0);   
     lcd.print("Denied!");
     
-    tone(2, 200); // Beep for 4 seconds
-    delay(4000); // Wait for 4 seconds
+    tone(2, 200); // Beep start
+    delay(3000); // Wait for 3 seconds
     noTone(2); // Stop beeping
 
     lcd.setCursor(0, 0);
     lcd.print("           ");
     lcd.setCursor(0, 0);  //clear text
   }
-}
 
-void loop() {
-    TimeDateTempvoid();
 }

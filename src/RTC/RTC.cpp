@@ -5,8 +5,8 @@
 #include <rgb_lcd.h>
 
 RTC_DS3231 rtc;
-rgb_lcd lcd;
 
+rgb_lcd lcd; // Declare the rgb_lcd object
 
 void TimeDateTempsetup() {
     rtc.begin();
@@ -51,5 +51,5 @@ void TimeDateTempvoid() {
   lcd.setCursor(11, 1);          // Print time at bottom right (col 11)
   lcd.print(timeBuf);
 
-  delay(10000);
+  delay(100); // Update every 100 ms
 }
