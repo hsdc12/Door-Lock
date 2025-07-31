@@ -50,6 +50,4 @@ void TimeDateTempvoid() {
 
   lcd.setCursor(11, 1);          // Print time at bottom right (col 11)
   lcd.print(timeBuf);
-
-  delay(100); // Update every 100 ms
 }
