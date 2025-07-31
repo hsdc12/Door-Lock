@@ -5,4 +5,8 @@ char getKeyPressed(); // call this in loop() to get the current key press (or '\
 
 void initKeypad();    // call in setup()
 
+void keypadloop();
+
+void checkcode();
+
 #endif

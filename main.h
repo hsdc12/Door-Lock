@@ -4,6 +4,7 @@
 #include <Arduino.h>
 #include "src/Lock/Lock.h"
 #include "src/Keypad/keypadHandler.h"
+#include "src/RFID/RFID.h"
 
 
 #endif
