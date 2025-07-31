@@ -42,8 +42,10 @@ char getKeyPressed() {
 
 void checkCode() {
   if (strcmp(inputBuffer, PASSCODE) == 0) {
-    lcd.setCursor(0, 1);
-    lcd.print("Access Granted");
+    lcd.setCursor(0, 0);
+    lcd.print("           ");
+    lcd.setCursor(0, 0);   
+    lcd.print("Authorized!");
 
     digitalWrite(4, HIGH);   //unlock door()
     digitalWrite(5, LOW);    
@@ -59,8 +61,10 @@ void checkCode() {
 
   }
   else {
-    lcd.setCursor(0, 1);
-    lcd.print("Access Denied ");
+    lcd.setCursor(0, 0);
+    lcd.print("           ");
+    lcd.setCursor(0, 0);   
+    lcd.print("Denied!");
     tone(2, 200, 600);
     delay(2000);
   }

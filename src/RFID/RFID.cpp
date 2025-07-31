@@ -67,9 +67,7 @@ void handleRFID() {
     lcd.setCursor(0, 0);   
     lcd.print("Denied!");
     
-    tone(2, 200); // Beep start
-    delay(3000); // Wait for 3 seconds
-    noTone(2); // Stop beeping
+    tone(2, 200, 600);
 
     lcd.setCursor(0, 0);
     lcd.print("           ");
