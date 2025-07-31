@@ -14,3 +14,14 @@ void lockdoor() {
     digitalWrite(6, LOW);   //green LED off
     noTone(2);              //buzzer off
 }
+
+void setupLock() {
+    pinMode(2, OUTPUT);  // Piezo
+    pinMode(4, OUTPUT);  // Solenoid
+    pinMode(5, OUTPUT);  // green LED
+    pinMode(6, OUTPUT);  // red LED
+
+    lockdoor();          // Start with the door locked
+}
+// This function can be called in setup() to initialize the lock state
+// and set the initial pin modes for the lock components.

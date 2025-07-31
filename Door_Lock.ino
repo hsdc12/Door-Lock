@@ -1,27 +1,22 @@
-#include "main.h"  // Or: #include "src/Lock/Lock.h" if you want to skip main.h
+#include "main.h"
+#include <SPI.h>
+#include <MFRC522.h>
 #include <rgb_lcd.h>
+
 
 
 rgb_lcd lcd;
 
 void setup() {
-  lcd.begin(16, 2);
-  lcd.setRGB(0, 128, 255);
-  lcd.clear();
-
-  pinMode(2, OUTPUT);  // Piezo
-  pinMode(4, OUTPUT);  // Solenoid
-  pinMode(5, OUTPUT);  // green LED
-  pinMode(6, OUTPUT);  // red LED
-
-  lockdoor();          // Start with the door locked
-
-  initKeypad();
+  LCDsetup(); // Initialize the LCD
+  initRFID(); // Initialize the RFID reader
+  TimeDateTempsetup();
+  setupLock();  // Initialize the lock system
 }
 
-void loop() {
-  keypadloop();
 
-  delay(100);
+void loop() 
+{
+  TimeDateTempvoid();
+  handleRFID(); // Handle RFID scanning and processing
 }
-
