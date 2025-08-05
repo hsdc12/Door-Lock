@@ -1,0 +1,31 @@
+name: Clang Format Check & Fix
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Install clang-format
+      run: sudo apt-get install -y clang-format
+
+    - name: Run clang-format and apply fixes
+      run: |
+        find . -name "*.[ch]pp" -o -name "*.[ch]" -o -name "*.ino" | xargs clang-format -i
+
+    - name: Commit changes if any
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git add .
+        git diff --quiet && echo "No formatting changes to commit." || git commit -m "Apply clang-format fixes"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
