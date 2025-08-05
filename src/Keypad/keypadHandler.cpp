@@ -65,8 +65,8 @@ void checkCode() {
     lcd.clear();
     lcd.setCursor(3, 0);   
     lcd.print("Admin Mode");
-    tone(2, 440, 300);
-    delay(300); // Wait for 0.3 seconds
+    tone(2, 440, 200);
+    delay(200); // Wait for 0.3 seconds
     tone(2, 660, 700);
     delay(2200); // Wait for 2.5 seconds
     enterAdminMode();
@@ -106,6 +106,8 @@ void keypadloop() {
   char k = getKeyPressed();
   if (!k) return;                   // no key pressed
 
+  tone(2, 586, 100); // Short beep for key press
+
   if (k == '*') {                   // Reset input
     inputPos = 0;
     lcd.clear();
@@ -135,6 +137,9 @@ void enterAdminMode() {
   // block until 6 digits are collected
   while (pos < CODE_LENGTH) {
     char k = getKeyPressed();
+    if (k) {
+      tone(2, 586, 100); // Short beep for key press
+    }
     if (k == '*') {                   // Reset input
       pos = 0;
       lcd.setCursor(0, 0);
@@ -149,6 +154,9 @@ void enterAdminMode() {
 }
  while (pos == CODE_LENGTH) {
      char k = getKeyPressed();
+      if (k) {
+        tone(2, 586, 100); // Short beep for key press
+      }
       if (k == '*') {                   // Reset input
         enterAdminMode(); // Restart the admin mode input
         return;
@@ -172,8 +180,8 @@ void enterAdminMode() {
   lcd.clear();
   lcd.setCursor(2, 0);
   lcd.print("PIN Updated!");
-  tone(2, 660, 300);
-  delay(300); // Wait for 0.3 seconds
+  tone(2, 660, 200);
+  delay(200); // Wait for 0.3 seconds
   tone(2, 880, 700);
   delay(2200); // Wait for 2.5 seconds
 }
