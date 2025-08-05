@@ -11,11 +11,6 @@ extern rgb_lcd lcd; // Declare the rgb_lcd object
 void TimeDateTempsetup() {
     rtc.begin();
     rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
-    lcd.begin(16, 2);
-    lcd.setRGB(0, 128, 255); 
-    lcd.print("CHINGDOM INC");
-    delay(5000);
-    lcd.clear();
 }
 
 void TimeDateTempvoid() {

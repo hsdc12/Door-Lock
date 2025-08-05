@@ -6,11 +6,11 @@
 rgb_lcd lcd;
 
 void setup() {
-  LCDsetup(); // Initialize the LCD
   initRFID(); // Initialize the RFID reader
   TimeDateTempsetup();
   initKeypad();
   setupLock();  // Initialize the lock system
+  LCDsetup(); // Initialize the LCD
 }
 
 

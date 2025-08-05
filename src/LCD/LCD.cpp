@@ -7,6 +7,7 @@ void LCDsetup() {
     lcd.begin(16, 2);
     lcd.setRGB(0, 128, 255); 
     lcd.clear();
+    lcd.setCursor(2, 0);
     lcd.print("CHINGDOM INC");
     delay(2500);
     lcd.clear();

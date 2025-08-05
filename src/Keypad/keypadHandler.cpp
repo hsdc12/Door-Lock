@@ -63,12 +63,12 @@ char getKeyPressed() {
 void checkCode() {
   if(strcmp(inputBuffer, ADMIN_PASSCODE) == 0) {
     lcd.clear();
-    lcd.setCursor(0, 0);   
-    lcd.print("Admin Mode!");
+    lcd.setCursor(3, 0);   
+    lcd.print("Admin Mode");
     tone(2, 440, 300);
     delay(300); // Wait for 0.3 seconds
-    tone(2, 580, 700);
-    delay(1000); // Wait for 2.5 seconds
+    tone(2, 660, 700);
+    delay(2200); // Wait for 2.5 seconds
     enterAdminMode();
     return;
   }
@@ -130,19 +130,38 @@ void enterAdminMode() {
   char newPin[CODE_LENGTH + 1];
   byte pos = 0;
   lcd.clear();
-  lcd.setCursor(2, 0);
   lcd.print("New PIN:");
 
   // block until 6 digits are collected
   while (pos < CODE_LENGTH) {
     char k = getKeyPressed();
+    if (k == '*') {                   // Reset input
+      pos = 0;
+      lcd.setCursor(0, 0);
+      lcd.print("New PIN:      ");
+      lcd.setCursor(7, 0);
+    }
     if (k && isDigit(k)) {
       newPin[pos++] = k;
       lcd.setCursor(pos + 7, 0);
       lcd.print('*');
-    }
   }
-  newPin[CODE_LENGTH] = '\0';
+}
+ while (pos == CODE_LENGTH) {
+     char k = getKeyPressed();
+      if (k == '*') {                   // Reset input
+        enterAdminMode(); // Restart the admin mode input
+        return;
+      }
+      if (k == '#') {
+        newPin[CODE_LENGTH] = '\0';
+        break;  // Exit the loop when the user confirms the new PIN
+      }
+ }
+
+
+
+
 
   // commit it
   strcpy(PASSCODE, newPin);
@@ -152,6 +171,9 @@ void enterAdminMode() {
 
   lcd.clear();
   lcd.setCursor(2, 0);
-  lcd.print("PIN Updated");
-  delay(1500);
+  lcd.print("PIN Updated!");
+  tone(2, 660, 300);
+  delay(300); // Wait for 0.3 seconds
+  tone(2, 880, 700);
+  delay(2200); // Wait for 2.5 seconds
 }
