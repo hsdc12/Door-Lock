@@ -1,0 +1,30 @@
+name: Lint & Auto-Fix Arduino Sketch
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Super-Linter (auto-fix)
+        uses: super-linter/super-linter@v5
+        with:
+          args: --fix
+        env:
+          DEFAULT_BRANCH: main
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VALIDATE_ALL_CODEBASE: true
+          VALIDATE_ARDUINO: true
+          VALIDATE_CPP: false                # skip C++ cpplint style checks
+          IGNORE_GITIGNORE: true
+          ARDUINO_FILE_PATH: Door_Lock.ino   # adjust if your .ino lives elsewhere
+          ARDUINO_BOARD: arduino:megaavr:nano_every
