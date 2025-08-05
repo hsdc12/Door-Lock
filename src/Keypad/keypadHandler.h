@@ -9,4 +9,6 @@ void keypadloop();
 
 void checkcode();
 
+void enterAdminMode(); // Allows setting a new passcode
+
 #endif

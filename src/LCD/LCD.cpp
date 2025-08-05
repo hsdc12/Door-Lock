@@ -8,6 +8,6 @@ void LCDsetup() {
     lcd.setRGB(0, 128, 255); 
     lcd.clear();
     lcd.print("CHINGDOM INC");
-    delay(3000);
+    delay(2500);
     lcd.clear();
 }

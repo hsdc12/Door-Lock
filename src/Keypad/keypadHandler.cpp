@@ -2,11 +2,11 @@
 #include <Keypad.h>
 #include "keypadHandler.h"
 #include <rgb_lcd.h>
+#include <EEPROM.h>
 
 // Define the keymap (4x3 for standard keypad)
 const byte ROWS = 4;
 const byte COLS = 3;
-
 char keys[ROWS][COLS] = {
   {'1','2','3'},
   {'4','5','6'},
@@ -18,29 +18,61 @@ char keys[ROWS][COLS] = {
 byte rowPins[ROWS] = {A2, 3, 7, A0};
 // Use analog pins A1, A3 and digital pin 8 for columns
 byte colPins[COLS] = {A1, A3, 8};
-
 // Create the Keypad object
 Keypad keypad = Keypad(makeKeymap(keys), rowPins, colPins, ROWS, COLS);
 
-const char PASSCODE[] = "123456";
-const byte CODE_LENGTH  = 6;
 
-extern rgb_lcd lcd;
+const byte CODE_LENGTH  = 6;
+char PASSCODE[CODE_LENGTH + 1];
 char inputBuffer[CODE_LENGTH + 1];  // extra byte for the string terminator
 byte inputPos = 0;
+const char ADMIN_PASSCODE[CODE_LENGTH + 1] = "654321"; // Default passcode
+
+
+extern rgb_lcd lcd;
 
 
 void initKeypad() {
-  // No initialization needed for the library,
-  // but we keep this here in case we add custom behavior
+  for (byte i = 0; i < CODE_LENGTH; i++) {
+    PASSCODE[i] = char( EEPROM.read(i));  // Initialize the passcode with zeros
+  }
+  PASSCODE[CODE_LENGTH] = '\0';  // Null-terminate the string
+
+  bool valid = true;
+  for (byte i = 0; i < CODE_LENGTH; i++) {
+    if (PASSCODE[i] < '0' || PASSCODE[i] > '9') {
+      valid = false;  // Ensure all characters are digits
+      break;
+    }
+  
+  if (!valid){
+    strcpy(PASSCODE, "123456");  // Default passcode if EEPROM is invalid
+    for (byte i = 0; i < CODE_LENGTH; i++) {
+      EEPROM.update(i, PASSCODE[i]);  // Save the default passcode to EEPROM
+    }
+  }
+}
 }
 
 char getKeyPressed() {
   return keypad.getKey();
+
 }
 
 
 void checkCode() {
+  if(strcmp(inputBuffer, ADMIN_PASSCODE) == 0) {
+    lcd.clear();
+    lcd.setCursor(0, 0);   
+    lcd.print("Admin Mode!");
+    tone(2, 440, 300);
+    delay(300); // Wait for 0.3 seconds
+    tone(2, 580, 700);
+    delay(1000); // Wait for 2.5 seconds
+    enterAdminMode();
+    return;
+  }
+
   if (strcmp(inputBuffer, PASSCODE) == 0) {
     lcd.setCursor(0, 0);
     lcd.print("           ");
@@ -91,4 +123,35 @@ void keypadloop() {
     lcd.setCursor(inputPos - 1, 0);
     lcd.print('*');
   }
+}
+
+
+void enterAdminMode() {
+  char newPin[CODE_LENGTH + 1];
+  byte pos = 0;
+  lcd.clear();
+  lcd.setCursor(2, 0);
+  lcd.print("New PIN:");
+
+  // block until 6 digits are collected
+  while (pos < CODE_LENGTH) {
+    char k = getKeyPressed();
+    if (k && isDigit(k)) {
+      newPin[pos++] = k;
+      lcd.setCursor(pos + 7, 0);
+      lcd.print('*');
+    }
+  }
+  newPin[CODE_LENGTH] = '\0';
+
+  // commit it
+  strcpy(PASSCODE, newPin);
+  for (byte i = 0; i < CODE_LENGTH; i++) {
+    EEPROM.update(i, PASSCODE[i]);
+  }
+
+  lcd.clear();
+  lcd.setCursor(2, 0);
+  lcd.print("PIN Updated");
+  delay(1500);
 }

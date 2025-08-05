@@ -14,6 +14,7 @@
 #include "src/RFID/RFID.h"
 #include "src/LCD/LCD.h"
 #include "src/Keypad/keypadHandler.h"
+#include "src/EPROMM/epromm.h"
 
 
 
