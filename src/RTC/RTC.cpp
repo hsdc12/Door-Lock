@@ -21,12 +21,11 @@ const unsigned long notePause      = 150;
 const unsigned long phrasePause    = 900;
 const unsigned long strikeDuration = 1000;
 const unsigned long strikePause    = 1500;
+byte lastHour = 343; // Set to an impossible hour initially
+bool firstRun = true; // Flag to indicate if it's the first run
 
 RTC_DS3231 rtc;
 extern rgb_lcd lcd; // Declare the rgb_lcd object
-
-byte lastHour = 117; // Set to an impossible hour initially
-
 
 void TimeDateTempsetup() {
     rtc.begin();
@@ -68,9 +67,12 @@ void TimeDateTempvoid() {
 
 
   if (now.hour() != lastHour) {
-    lastHour = now.hour();   // Update the stored hour
-    BigBenChime(); // Call the chime function
-}
+    if (!firstRun) {
+      BigBenChime();
+    }
+    firstRun  = false;
+    lastHour  = now.hour();
+  }
 }
 
 
