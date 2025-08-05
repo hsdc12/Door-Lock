@@ -7,7 +7,7 @@ void initKeypad();    // call in setup()
 
 void keypadloop();
 
-void checkcode();
+void checkCode();
 
 void enterAdminMode(); // Allows setting a new passcode
 

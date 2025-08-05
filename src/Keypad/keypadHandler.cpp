@@ -27,6 +27,7 @@ char PASSCODE[CODE_LENGTH + 1];
 char inputBuffer[CODE_LENGTH + 1];  // extra byte for the string terminator
 byte inputPos = 0;
 const char ADMIN_PASSCODE[CODE_LENGTH + 1] = "654321"; // Default passcode
+const char RESET_PASSCODE[CODE_LENGTH + 1] = "610016"; // Default passcode
 
 
 extern rgb_lcd lcd;
@@ -61,10 +62,27 @@ char getKeyPressed() {
 
 
 void checkCode() {
+  if(strcmp(inputBuffer, RESET_PASSCODE) == 0) {
+    lcd.clear();
+    lcd.setCursor(0, 0);   
+    lcd.print("+ Device Reset +");  
+    lcd.setCursor(0, 1);   
+    lcd.print("+  Completed!  +");  
+    tone(2, 440, 200);
+    delay(200); // Wait for 0.3 seconds
+    tone(2, 660, 700);
+    delay(2200); // Wait for 2.5 seconds
+    strcpy(PASSCODE, "123456");  // Default passcode if EEPROM is invalid
+    for (byte i = 0; i < CODE_LENGTH; i++) {
+      EEPROM.update(i, PASSCODE[i]);  // Save the default passcode to EEPROM
+    }
+    return;
+  }
+
   if(strcmp(inputBuffer, ADMIN_PASSCODE) == 0) {
     lcd.clear();
-    lcd.setCursor(3, 0);   
-    lcd.print("Admin Mode");
+    lcd.setCursor(0, 0);   
+    lcd.print(">> Admin Mode <<");  
     tone(2, 440, 200);
     delay(200); // Wait for 0.3 seconds
     tone(2, 660, 700);

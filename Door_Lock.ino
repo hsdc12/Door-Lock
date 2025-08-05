@@ -19,7 +19,7 @@ void loop()
   TimeDateTempvoid();
   handleRFID(); // Handle RFID scanning and processing
   keypadloop();
-  delay(25); // Small delay to avoid overwhelming the loop
+  delay(20); // Small delay to avoid overwhelming the loop
 }
 
 
