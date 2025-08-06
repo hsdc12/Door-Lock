@@ -1,0 +1,6 @@
+BasedOnStyle: Google
+IndentWidth: 2            # Arduino code usually uses 2 spaces per indent
+ColumnLimit: 80           # Keep lines to 80 characters wide for readability
+AllowShortFunctionsOnASingleLine: Inline  # Allows short functions in one line
+BreakBeforeBraces: Allman  # Arduino style often prefers braces on a new line
+PointerAlignment: Left     # Pointers aligned to the left (e.g., int* ptr)
