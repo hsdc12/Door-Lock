@@ -29,7 +29,9 @@ extern rgb_lcd lcd; // Declare the rgb_lcd object
 
 void TimeDateTempsetup() {
     rtc.begin();
-    rtc.adjust(DateTime(F(__DATE__), F(__TIME__))); // Set RTC to compile time
+  if (rtc.lostPower()) {
+    rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
+}
 }
 
 void TimeDateTempvoid() {
