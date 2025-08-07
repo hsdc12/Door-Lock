@@ -4,6 +4,7 @@
 #include <rgb_lcd.h>
 #include <EEPROM.h>
 
+
 // Define the keymap (4x3 for standard keypad)
 const byte ROWS = 4;
 const byte COLS = 3;
