@@ -4,58 +4,69 @@
 extern rgb_lcd lcd;
 
 byte oneDotChar[8] = {
-  B00100,
-  B01100,
-  B00100,
-  B00100,
-  B00100,
-  B00000,
-  B00100,
-  B00000
+  0b00100,
+  0b01100,
+  0b00100,
+  0b00100,
+  0b00100,
+  0b01110,
+  0b00000,
+  0b00001  // dot at column 4 only
 };
 
 byte twoDotChar[8] = {
-  B01110,
-  B00001,
-  B00010,
-  B00100,
-  B01000,
-  B00000,
-  B00100,
-  B00000
+  0b01110,
+  0b10001,
+  0b00001,
+  0b00010,
+  0b00100,
+  0b11111,
+  0b00000,
+  0b00001
 };
 
 byte threeDotChar[8] = {
-  B01110,
-  B00001,
-  B00110,
-  B00001,
-  B01110,
-  B00000,
-  B00100,
-  B00000
+  0b01110,
+  0b00001,
+  0b00010,
+  0b00001,
+  0b10001,
+  0b01110,
+  0b00000,
+  0b00001
 };
 
 byte fourDotChar[8] = {
-  B00010,
-  B00110,
-  B01010,
-  B10010,
-  B11111,
-  B00000,
-  B00100,
-  B00000
+  0b00010,
+  0b00110,
+  0b01010,
+  0b10010,
+  0b11111,
+  0b00010,
+  0b00000,
+  0b00001
 };
 
 byte fiveDotChar[8] = {
-  B11111,
-  B10000,
-  B11110,
-  B00001,
-  B11110,
-  B00000,
-  B00100,
-  B00000
+  0b11111,
+  0b10000,
+  0b11110,
+  0b00001,
+  0b00001,
+  0b11110,
+  0b00000,
+  0b00001
+};
+
+byte sixDotChar[8] = {
+  0b00110,
+  0b01000,
+  0b10000,
+  0b11110,
+  0b10001,
+  0b01110,
+  0b00000,
+  0b00001
 };
 
 void LCDsetup() {
@@ -65,7 +76,8 @@ void LCDsetup() {
     lcd.createChar(2, twoDotChar);
     lcd.createChar(3, threeDotChar);
     lcd.createChar(4, fourDotChar);
-    lcd.createChar(5, fiveDotChar); 
+    lcd.createChar(5, fiveDotChar);
+    lcd.createChar(6, sixDotChar); 
     lcd.clear();
     lcd.setCursor(2, 0);
     lcd.print("CHINGDOM INC");

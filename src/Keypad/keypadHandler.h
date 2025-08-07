@@ -10,5 +10,12 @@ void keypadloop();
 void checkCode();
 
 void enterAdminMode(); // Allows setting a new passcode
+    void adminPassword(); // Allows setting a new passcode
+    void adminTime();
+    void adminDate();
+    void adminReset();
+    void adminCard();
+    void adminExit();
+    void adminMenu();
 
 #endif

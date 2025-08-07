@@ -28,7 +28,6 @@ char PASSCODE[CODE_LENGTH + 1];
 char inputBuffer[CODE_LENGTH + 1];  // extra byte for the string terminator
 byte inputPos = 0;
 const char ADMIN_PASSCODE[CODE_LENGTH + 1] = "654321"; // Default passcode
-const char RESET_PASSCODE[CODE_LENGTH + 1] = "610016"; // Default passcode
 
 
 extern rgb_lcd lcd;
@@ -63,23 +62,6 @@ char getKeyPressed() {
 
 
 void checkCode() {
-  if(strcmp(inputBuffer, RESET_PASSCODE) == 0) {
-    lcd.clear();
-    lcd.setCursor(0, 0);   
-    lcd.print("+ Device Reset +");  
-    lcd.setCursor(0, 1);   
-    lcd.print("+  Completed!  +");  
-    tone(2, 440, 200);
-    delay(200); // Wait for 0.3 seconds
-    tone(2, 660, 700);
-    delay(2200); // Wait for 2.5 seconds
-    strcpy(PASSCODE, "123456");  // Default passcode if EEPROM is invalid
-    for (byte i = 0; i < CODE_LENGTH; i++) {
-      EEPROM.update(i, PASSCODE[i]);  // Save the default passcode to EEPROM
-    }
-    return;
-  }
-
   if(strcmp(inputBuffer, ADMIN_PASSCODE) == 0) {
     lcd.clear();
     lcd.setCursor(0, 0);   
@@ -148,6 +130,52 @@ void keypadloop() {
 
 
 void enterAdminMode() {
+  adminMenu();
+  while (true) {
+    char k = getKeyPressed();
+    if (k) {
+      tone(2, 586, 100); // Short beep for key press
+    }
+    if (k == '1') {
+      adminPassword();
+    } else if (k == '2') {
+      adminCard();
+    } else if (k == '3') {
+      adminExit();
+      return; // Exit admin mode
+    } else if (k == '4') {
+      adminReset();
+    } else if (k == '5') {
+      adminTime();
+    } else if (k == '6') {
+      adminDate();
+    }
+  }
+}
+
+void adminMenu() {
+  lcd.clear();
+
+  // Line 1: 1PIN   2Card   3EXIT
+  lcd.setCursor(0, 0);
+  lcd.write(byte(1));  // prints your custom "1."
+  lcd.print("PIN ");
+  lcd.write(byte(2));  // prints custom "2."
+  lcd.print("CARD ");
+  lcd.write(byte(3));  // prints custom "3."
+  lcd.print("EXIT");
+
+  // Line 2: 4RST   5time   6Date
+  lcd.setCursor(0, 1);
+  lcd.write(byte(4));  // custom "4."
+  lcd.print("RST ");
+  lcd.write(byte(5));  // custom "5."
+  lcd.print("TIME ");
+  lcd.write(byte(6));  // custom "6."
+  lcd.print("DATE");
+}
+
+void adminPassword() {
   char newPin[CODE_LENGTH + 1];
   byte pos = 0;
   lcd.clear();
@@ -185,12 +213,6 @@ void enterAdminMode() {
         break;  // Exit the loop when the user confirms the new PIN
       }
  }
-
-
-
-
-
-  // commit it
   strcpy(PASSCODE, newPin);
   for (byte i = 0; i < CODE_LENGTH; i++) {
     EEPROM.update(i, PASSCODE[i]);
@@ -203,4 +225,51 @@ void enterAdminMode() {
   delay(200); // Wait for 0.3 seconds
   tone(2, 880, 700);
   delay(2200); // Wait for 2.5 seconds
+  enterAdminMode();  //return to admin mode
 }
+
+void adminCard() {
+
+}
+
+void adminExit() {
+    lcd.clear();
+    lcd.setCursor(0, 0);   
+    lcd.print("+Exiting Admin +");  
+    lcd.setCursor(0, 1);   
+    lcd.print("+     Mode     +");  
+    tone(2, 440, 200);
+    delay(200); // Wait for 0.3 seconds
+    tone(2, 660, 700);
+    delay(2200); // Wait for 2.5 seconds
+    return;  // Exit admin mode and return to normal operation
+}
+
+
+void adminReset() {
+    lcd.clear();
+    lcd.setCursor(0, 0);   
+    lcd.print("+ Device Reset +");  
+    lcd.setCursor(0, 1);   
+    lcd.print("+  Completed!  +");  
+    tone(2, 440, 200);
+    delay(200); // Wait for 0.3 seconds
+    tone(2, 660, 700);
+    delay(2200); // Wait for 2.5 seconds
+    strcpy(PASSCODE, "123456");  // Default passcode if EEPROM is invalid
+    for (byte i = 0; i < CODE_LENGTH; i++) {
+      EEPROM.update(i, PASSCODE[i]);  // Save the default passcode to EEPROM
+    }
+    enterAdminMode();  //return to admin mode
+}
+
+void adminTime() {
+
+}
+
+
+void adminDate() {
+
+ }
+
+ 
