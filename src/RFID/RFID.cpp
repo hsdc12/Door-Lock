@@ -11,6 +11,7 @@ MFRC522 myRFID(SS_PIN, RST_PIN);   // Create MFRC522 instance.
 extern rgb_lcd lcd;
 
 void initRFID() {
+  noTone(2); // Stop any tone that might be playing
   SPI.begin();      // Initiate  SPI bus
   myRFID.PCD_Init();   // Initiate MFRC522
 }
