@@ -141,21 +141,26 @@ void enterAdminMode() {
   while (true) {
     char k = getKeyPressed();
     if (k) {
-      tone(2, 586, 100); // Short beep for key press
+      tone(2, 586, 100);
     }
     if (k == '1') {
       adminPassword();
+      return;
     } else if (k == '2') {
       adminCard();
+      return;
     } else if (k == '3') {
       adminExit();
       break; // Exit admin mode
     } else if (k == '4') {
       adminReset();
+      return;
     } else if (k == '5') {
       adminTime();
+      return;
     } else if (k == '6') {
       adminDate();
+      return;
     }
   }
 }
