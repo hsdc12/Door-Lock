@@ -21,7 +21,6 @@ void setupLock() {
     pinMode(5, OUTPUT);  // green LED
     pinMode(6, OUTPUT);  // red LED
 
+    noTone(2); // Stop any tone that might be playing
     lockdoor();          // Start with the door locked
 }
-// This function can be called in setup() to initialize the lock state
-// and set the initial pin modes for the lock components.

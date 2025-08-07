@@ -3,6 +3,8 @@
 #include "keypadHandler.h"
 #include <rgb_lcd.h>
 #include <EEPROM.h>
+#include <Wire.h>
+#include <RTClib.h>
 
 
 // Define the keymap (4x3 for standard keypad)
@@ -29,8 +31,13 @@ char inputBuffer[CODE_LENGTH + 1];  // extra byte for the string terminator
 byte inputPos = 0;
 const char ADMIN_PASSCODE[CODE_LENGTH + 1] = "654321"; // Default passcode
 
+char timeInput[6];  // HHMM + null + spare
+int inputIndex = 0;
+bool timeReady = false;
+
 
 extern rgb_lcd lcd;
+extern RTC_DS3231 rtc;
 
 
 void initKeypad() {
@@ -142,7 +149,7 @@ void enterAdminMode() {
       adminCard();
     } else if (k == '3') {
       adminExit();
-      return; // Exit admin mode
+      break; // Exit admin mode
     } else if (k == '4') {
       adminReset();
     } else if (k == '5') {
@@ -156,22 +163,20 @@ void enterAdminMode() {
 void adminMenu() {
   lcd.clear();
 
-  // Line 1: 1PIN   2Card   3EXIT
   lcd.setCursor(0, 0);
-  lcd.write(byte(1));  // prints your custom "1."
+  lcd.write(byte(1));  
   lcd.print("PIN ");
-  lcd.write(byte(2));  // prints custom "2."
+  lcd.write(byte(2));  
   lcd.print("CARD ");
-  lcd.write(byte(3));  // prints custom "3."
+  lcd.write(byte(3));  
   lcd.print("EXIT");
 
-  // Line 2: 4RST   5time   6Date
   lcd.setCursor(0, 1);
-  lcd.write(byte(4));  // custom "4."
+  lcd.write(byte(4));  
   lcd.print("RST ");
-  lcd.write(byte(5));  // custom "5."
+  lcd.write(byte(5));  
   lcd.print("TIME ");
-  lcd.write(byte(6));  // custom "6."
+  lcd.write(byte(6));  
   lcd.print("DATE");
 }
 
@@ -242,7 +247,7 @@ void adminExit() {
     delay(200); // Wait for 0.3 seconds
     tone(2, 660, 700);
     delay(2200); // Wait for 2.5 seconds
-    return;  // Exit admin mode and return to normal operation
+    return;  // Exit admin mode
 }
 
 
@@ -264,7 +269,92 @@ void adminReset() {
 }
 
 void adminTime() {
+  lcd.clear();
+  inputIndex = 0;
+  timeReady = false;
+  memset(timeInput, 0, sizeof(timeInput));   //reset time input
+  int X = 1; 
 
+  int newHour = 0, newMinute = 0;
+
+  while (X == 1) {
+    char k   = getKeyPressed();
+    DateTime now = rtc.now();
+
+    char timeBuf[6];
+    sprintf(timeBuf, "%02d:%02d", now.hour(), now.minute());
+
+    //    start as placeholder "--:--"
+    char changedBuf[6] = "__:__";
+    if (!timeReady) {
+      // fill in any typed digits
+      for (int i = 0; i < inputIndex && i < 4; i++) {
+        // place first two digits at [0],[1], next two at [3],[4]
+        if (i < 2)         changedBuf[i]     = timeInput[i];
+        else               changedBuf[i + 1] = timeInput[i];
+      }
+    } else {
+      // after confirm, show the newly set time
+      sprintf(changedBuf, "%02d:%02d", newHour, newMinute);
+    }
+
+    lcd.setCursor(0, 0);
+    lcd.print("Current:  "); 
+    lcd.print(timeBuf);
+
+    lcd.setCursor(0, 1);
+    lcd.print("Changed:  ");
+    lcd.print(changedBuf);
+
+    // 4) Beep on any keypress
+    if (k) {
+      tone(2, 586, 100);
+    }
+
+    // 5) Handle keypad
+    if (!timeReady && k) {
+      // digit keys
+      if (k >= '0' && k <= '9' && inputIndex < 4) {
+        timeInput[inputIndex++] = k;
+      }
+      // confirm entry
+      else if (k == '#') {
+        if (inputIndex == 4) {
+          // parse HHMM
+          newHour   = (timeInput[0] - '0') * 10 + (timeInput[1] - '0');
+          newMinute = (timeInput[2] - '0') * 10 + (timeInput[3] - '0');
+
+          // apply to RTC (keep today's date)
+          rtc.adjust(DateTime(now.year(),
+                              now.month(),
+                              now.day(),
+                              newHour,
+                              newMinute,
+                              now.second()));
+          timeReady = true;
+
+          lcd.clear();
+          lcd.setCursor(0, 0);   
+          lcd.print("+ Time Changed +");  
+          lcd.setCursor(0, 1);   
+          lcd.print("+              +");
+          tone(2, 660, 200);
+          delay(200);
+          tone(2, 880, 700);
+          delay(2200); 
+          
+          X = 0; 
+        }
+      }
+
+      else if (k == '*') {
+        inputIndex = 0;
+        memset(timeInput, 0, sizeof(timeInput));
+      }
+    }
+  }
+
+  enterAdminMode();  // Return to admin mode
 }
 
 
