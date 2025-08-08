@@ -35,6 +35,10 @@ char timeInput[6];  // HHMM + null + spare
 int inputIndex = 0;
 bool timeReady = false;
 
+char dateInput[8];  // DDMMYY + null + spare
+int secondinputIndex = 0;
+bool dateReady = false;
+
 
 extern rgb_lcd lcd;
 extern RTC_DS3231 rtc;
@@ -362,9 +366,99 @@ void adminTime() {
   enterAdminMode();  // Return to admin mode
 }
 
-
 void adminDate() {
+  lcd.clear();
+  secondinputIndex = 0;
+  dateReady = false;
+  memset(dateInput, 0, sizeof(dateInput));   //reset time input
+  int Y = 1; 
+  DateTime now = rtc.now();
 
+  int newYear = 0, newMonth = 0; int newDay = 0;
+
+  while (Y == 1) {
+    char k   = getKeyPressed();
+
+    char dateBuf[9];   // "DD/MM/YY" + null
+    sprintf(dateBuf, "%02d/%02d/%02d",
+          now.day(),
+          now.month(),
+          now.year() % 100);
+
+    //    start as placeholder "--:--"
+    char changedBuf[9] = "__/__/__";
+    if (!dateReady) {
+      // fill in any typed digits
+      for (int i = 0; i < secondinputIndex && i < 6; i++) {
+        // place first two digits at [0],[1], next two at [3],[4]
+        if      (i < 2)            changedBuf[i]     = dateInput[i];
+        else if (i >= 2 && i < 4)  changedBuf[i + 1] = dateInput[i];
+        else                       changedBuf[i + 2] = dateInput[i];
+      }
+    } else {
+      // after confirm, show the newly set time
+      sprintf(changedBuf, "%02d/%02d/%02d", newDay, newMonth, newYear);
+    }
+
+    lcd.setCursor(0, 0);
+    lcd.print("Current:"); 
+    lcd.print(dateBuf);
+
+    lcd.setCursor(0, 1);
+    lcd.print("Changed:");
+    lcd.print(changedBuf);
+
+    // 4) Beep on any keypress
+    if (k) {
+      tone(2, 586, 100);
+    }
+
+    // 5) Handle keypad
+    if (!dateReady && k) {
+      // digit keys
+      if (k >= '0' && k <= '9' && secondinputIndex < 6) {
+        dateInput[secondinputIndex++] = k;
+      }
+      // confirm entry
+      else if (k == '#') {
+        if (secondinputIndex == 6) {
+
+          newDay   = (dateInput[0] - '0') * 10 + (dateInput[1] - '0');
+          newMonth = (dateInput[2] - '0') * 10 + (dateInput[3] - '0');
+          newYear = (dateInput[4] - '0') * 10 + (dateInput[5] - '0');
+
+          // apply to RTC (keep today's date)
+          rtc.adjust(DateTime(newYear + 2000,
+                              newMonth,
+                              newDay,
+                              now.hour(),
+                              now.minute(),
+                              now.second()));
+          dateReady = true;
+
+          lcd.clear();
+          lcd.setCursor(0, 0);   
+          lcd.print("+ Date Changed +");  
+          lcd.setCursor(0, 1);   
+          lcd.print("+              +");
+          tone(2, 660, 200);
+          delay(200);
+          tone(2, 880, 700);
+          delay(2200); 
+          
+          Y = 0; 
+        }
+      }
+
+      else if (k == '*') {
+        secondinputIndex = 0;
+        memset(dateInput, 0, sizeof(dateInput));
+      }
+    }
+  }
+
+  enterAdminMode();  // Return to admin mode
  }
+
 
  
