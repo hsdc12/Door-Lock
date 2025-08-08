@@ -168,7 +168,8 @@ void enterAdminMode() {
       return;
     } else if (k == '3') {
       adminExit();
-      break; // Exit admin mode
+      return;
+
     } else if (k == '4') {
       adminReset();
       return;
@@ -513,7 +514,7 @@ void adminCard() {
       IDCard4();
       return;
     } else if (k == '5') {
-
+      IDReset();
       return;
     } else if (k == '6') {
       enterAdminMode();
@@ -658,6 +659,25 @@ void IDCard4() {
   lcd.print("+     Card     +");
   lcd.setCursor(0, 1);
   lcd.print("+    Saved!    +");
+  tone(2, 660, 200);
+  delay(200);
+  tone(2, 880, 700);
+  delay(2200);
+  adminCard();  // Return to card menu
+}
+
+void IDReset() {
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("  Deleting All   ");
+  lcd.setCursor(0, 1);
+  lcd.print("  Stored Cards   ");
+  delay(500); // Wait for 0.5 seconds
+
+  // Reset all card slots in EEPROM
+  for (int i = CARD1_ADDR; i < CARD4_ADDR + CARD_SIZE; i++) {
+    EEPROM.update(i, 0);
+  }
   tone(2, 660, 200);
   delay(200);
   tone(2, 880, 700);

@@ -20,6 +20,7 @@ void enterAdminMode(); // Allows setting a new passcode
             void IDCard2(); // Allows setting a new card
             void IDCard3(); // Allows setting a new card
             void IDCard4(); // Allows setting a new card
+            void IDReset(); // Allows resetting all cards
     void adminExit();
     void adminMenu();
 
