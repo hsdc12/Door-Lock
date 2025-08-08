@@ -476,15 +476,19 @@ void adminDate() {
   lcd.clear();
 
   lcd.setCursor(0, 0);
+  lcd.print("Cards: ");
   lcd.write(byte(1));  
-  lcd.print("ID    ");
+  lcd.print(" ");
   lcd.write(byte(2));
-  lcd.print("ID");  
-
-  lcd.setCursor(0, 1);
-  lcd.write(byte(3));  
-  lcd.print("Reset");
+  lcd.print(" ");
+  lcd.write(byte(3));
+  lcd.print(" ");
   lcd.write(byte(4));  
+
+  lcd.setCursor(1, 1);
+  lcd.write(byte(5));  
+  lcd.print("Reset   ");
+  lcd.write(byte(6));  
   lcd.print("Exit");
 
 }
@@ -512,7 +516,7 @@ void adminCard() {
 
       return;
     } else if (k == '6') {
-      return;  // Exit card menu
+      enterAdminMode();
     }
   }
 }

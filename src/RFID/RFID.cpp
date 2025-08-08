@@ -1,12 +1,23 @@
 #include <Arduino.h>
 #include "RFID.h"
 #include <SPI.h>
-
-
+#include <EEPROM.h>
 
 #define SS_PIN 10
 #define RST_PIN 9
 MFRC522 myRFID(SS_PIN, RST_PIN);   // Create MFRC522 instance.
+
+#define PASSWORD_ADDR 0     // Start of password in EEPROM
+#define CARD1_ADDR      (PASSWORD_ADDR + PASSWORD_SIZE)       // 16
+#define CARD2_ADDR      (CARD1_ADDR + 12)                     // 28
+#define CARD3_ADDR      (CARD2_ADDR + 12)                     // 40
+#define CARD4_ADDR      (CARD3_ADDR + 12)                     // 52
+
+#define CARD_SIZE       12
+#define PASSWORD_SIZE   16
+
+char scannedID[CARD_SIZE + 1];  // buffer for scanned card hex string
+int len = myRFID.uid.size;
 
 extern rgb_lcd lcd;
 
@@ -30,26 +41,41 @@ void handleRFID() {
     
     return;
   }
-  //Show UID on serial monitor
+  char scannedID[CARD_SIZE + 1];
+  int len = myRFID.uid.size; // UID length in bytes
+  for (int i = 0; i < len && i < CARD_SIZE / 2; i++) {
+    sprintf(&scannedID[i * 2], "%02X", myRFID.uid.uidByte[i]);
+  }
+  scannedID[len * 2] = '\0';  // Null-terminate
 
-  String content= "";
-  for (byte i = 0; i < myRFID.uid.size; i++) {
-     content.concat(String(myRFID.uid.uidByte[i] < 0x10 ? " 0" : " "));
-     content.concat(String(myRFID.uid.uidByte[i], HEX));
-  }
-  content.toUpperCase();
-  if (content.substring(1) == "76 FE 31 02") //change here the UID of the card/cards that you want to give access
-  {
+  // Read all stored cards
+  char storedCard1[CARD_SIZE + 1];
+  char storedCard2[CARD_SIZE + 1];
+  char storedCard3[CARD_SIZE + 1];
+  char storedCard4[CARD_SIZE + 1];
+
+  readStoredCard(1, storedCard1);
+  readStoredCard(2, storedCard2);
+  readStoredCard(3, storedCard3);
+  readStoredCard(4, storedCard4);
+
+ if (strcmp(scannedID, storedCard1) == 0) {
     AuthorizedAccess();
-  }
- 
- else   {
+  } else if (strcmp(scannedID, storedCard2) == 0) {
+    AuthorizedAccess();
+  } else if (strcmp(scannedID, storedCard3) == 0) {
+    AuthorizedAccess();
+  } else if (strcmp(scannedID, storedCard4) == 0) {
+    AuthorizedAccess();
+  } 
+  else   {
     lcd.setCursor(0, 0);
     lcd.print("           ");
     lcd.setCursor(0, 0);   
     lcd.print("Denied!");
     
     tone(2, 200, 600);
+    delay(600); // Wait for 600 milliseconds
 
     lcd.setCursor(0, 0);
     lcd.print("           ");
@@ -78,4 +104,19 @@ void AuthorizedAccess() {
     lcd.setCursor(0, 0);
     lcd.print("           ");
     lcd.setCursor(0, 0);   //clears the text after door lock cycle
+}
+
+void readStoredCard(int slot, char* buffer) {
+  int addr = 0;
+  switch (slot) {
+    case 1: addr = CARD1_ADDR; break;
+    case 2: addr = CARD2_ADDR; break;
+    case 3: addr = CARD3_ADDR; break;
+    case 4: addr = CARD4_ADDR; break;
+    default: return;
+  }
+  for (int i = 0; i < CARD_SIZE; i++) {
+    buffer[i] = EEPROM.read(addr + i);
+  }
+  buffer[CARD_SIZE] = '\0';  // Null-terminate
 }
