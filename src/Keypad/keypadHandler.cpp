@@ -512,7 +512,7 @@ void adminCard() {
 
       return;
     } else if (k == '6') {
-      break;
+      return;  // Exit card menu
     }
   }
 }
@@ -554,13 +554,109 @@ void IDCard1() {
 }
 
 void IDCard2() {
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Please Scan Card");
+  lcd.setCursor(0, 1);
+  lcd.print("   to Update:   ");
 
+
+  while (!myRFID.PICC_IsNewCardPresent() || !myRFID.PICC_ReadCardSerial()) {
+    // wait here until card is scanned
+  }
+  char uidString[CARD_SIZE + 1];
+  int len = myRFID.uid.size; // UID length in bytes
+  for (int i = 0; i < len && i < CARD_SIZE / 2; i++) {
+    sprintf(&uidString[i*2], "%02X", myRFID.uid.uidByte[i]);
+  }
+  uidString[len*2] = '\0';  // null terminate
+
+  // Save to EEPROM
+  int addr = CARD2_ADDR;
+  for (int i = 0; i < CARD_SIZE; i++) {
+    char c = (i < len*2) ? uidString[i] : '\0';
+    EEPROM.update(addr + i, c);
+}
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("+     Card     +");
+  lcd.setCursor(0, 1);
+  lcd.print("+    Saved!    +");
+  tone(2, 660, 200);
+  delay(200);
+  tone(2, 880, 700);
+  delay(2200);
+  adminCard();  // Return to card menu
 }
 
 void IDCard3() {
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Please Scan Card");
+  lcd.setCursor(0, 1);
+  lcd.print("   to Update:   ");
 
+
+  while (!myRFID.PICC_IsNewCardPresent() || !myRFID.PICC_ReadCardSerial()) {
+    // wait here until card is scanned
+  }
+  char uidString[CARD_SIZE + 1];
+  int len = myRFID.uid.size; // UID length in bytes
+  for (int i = 0; i < len && i < CARD_SIZE / 2; i++) {
+    sprintf(&uidString[i*2], "%02X", myRFID.uid.uidByte[i]);
+  }
+  uidString[len*2] = '\0';  // null terminate
+
+  // Save to EEPROM
+  int addr = CARD3_ADDR;
+  for (int i = 0; i < CARD_SIZE; i++) {
+    char c = (i < len*2) ? uidString[i] : '\0';
+    EEPROM.update(addr + i, c);
+}
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("+     Card     +");
+  lcd.setCursor(0, 1);
+  lcd.print("+    Saved!    +");
+  tone(2, 660, 200);
+  delay(200);
+  tone(2, 880, 700);
+  delay(2200);
+  adminCard();  // Return to card menu
 }
 
 void IDCard4() {
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Please Scan Card");
+  lcd.setCursor(0, 1);
+  lcd.print("   to Update:   ");
 
+
+  while (!myRFID.PICC_IsNewCardPresent() || !myRFID.PICC_ReadCardSerial()) {
+    // wait here until card is scanned
+  }
+  char uidString[CARD_SIZE + 1];
+  int len = myRFID.uid.size; // UID length in bytes
+  for (int i = 0; i < len && i < CARD_SIZE / 2; i++) {
+    sprintf(&uidString[i*2], "%02X", myRFID.uid.uidByte[i]);
+  }
+  uidString[len*2] = '\0';  // null terminate
+
+  // Save to EEPROM
+  int addr = CARD4_ADDR;
+  for (int i = 0; i < CARD_SIZE; i++) {
+    char c = (i < len*2) ? uidString[i] : '\0';
+    EEPROM.update(addr + i, c);
+}
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("+     Card     +");
+  lcd.setCursor(0, 1);
+  lcd.print("+    Saved!    +");
+  tone(2, 660, 200);
+  delay(200);
+  tone(2, 880, 700);
+  delay(2200);
+  adminCard();  // Return to card menu
 }
