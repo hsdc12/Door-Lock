@@ -168,8 +168,7 @@ void enterAdminMode() {
       return;
     } else if (k == '3') {
       adminExit();
-      return;
-
+      break;
     } else if (k == '4') {
       adminReset();
       return;
@@ -517,7 +516,7 @@ void adminCard() {
       IDReset();
       return;
     } else if (k == '6') {
-      enterAdminMode();
+      break;  // Exit card menu
     }
   }
 }
