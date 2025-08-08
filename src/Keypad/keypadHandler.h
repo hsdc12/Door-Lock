@@ -15,6 +15,11 @@ void enterAdminMode(); // Allows setting a new passcode
     void adminDate();
     void adminReset();
     void adminCard();
+        void CardMenu(); // Allows setting a new card
+            void IDCard1(); // Allows setting a new card
+            void IDCard2(); // Allows setting a new card
+            void IDCard3(); // Allows setting a new card
+            void IDCard4(); // Allows setting a new card
     void adminExit();
     void adminMenu();
 

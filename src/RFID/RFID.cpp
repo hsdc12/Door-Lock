@@ -40,6 +40,24 @@ void handleRFID() {
   content.toUpperCase();
   if (content.substring(1) == "76 FE 31 02") //change here the UID of the card/cards that you want to give access
   {
+    AuthorizedAccess();
+  }
+ 
+ else   {
+    lcd.setCursor(0, 0);
+    lcd.print("           ");
+    lcd.setCursor(0, 0);   
+    lcd.print("Denied!");
+    
+    tone(2, 200, 600);
+
+    lcd.setCursor(0, 0);
+    lcd.print("           ");
+    lcd.setCursor(0, 0);  //clear text
+  }
+}
+
+void AuthorizedAccess() {
     lcd.setCursor(0, 0);
     lcd.print("           ");
     lcd.setCursor(0, 0);   
@@ -60,18 +78,4 @@ void handleRFID() {
     lcd.setCursor(0, 0);
     lcd.print("           ");
     lcd.setCursor(0, 0);   //clears the text after door lock cycle
-  }
- 
- else   {
-    lcd.setCursor(0, 0);
-    lcd.print("           ");
-    lcd.setCursor(0, 0);   
-    lcd.print("Denied!");
-    
-    tone(2, 200, 600);
-
-    lcd.setCursor(0, 0);
-    lcd.print("           ");
-    lcd.setCursor(0, 0);  //clear text
-  }
 }

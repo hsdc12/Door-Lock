@@ -5,7 +5,11 @@
 #include <EEPROM.h>
 #include <Wire.h>
 #include <RTClib.h>
+#include <SPI.h>
+#include <MFRC522.h>
 
+
+extern MFRC522 myRFID;
 
 // Define the keymap (4x3 for standard keypad)
 const byte ROWS = 4;
@@ -39,6 +43,15 @@ char dateInput[8];  // DDMMYY + null + spare
 int secondinputIndex = 0;
 bool dateReady = false;
 
+#define PASSWORD_ADDR 0     // Start of password in EEPROM
+#define CARD1_ADDR      (PASSWORD_ADDR + PASSWORD_SIZE)       // 16
+#define CARD2_ADDR      (CARD1_ADDR + 12)                     // 28
+#define CARD3_ADDR      (CARD2_ADDR + 12)                     // 40
+#define CARD4_ADDR      (CARD3_ADDR + 12)                     // 52
+
+#define CARD_SIZE       12
+#define PASSWORD_SIZE   16
+
 
 extern rgb_lcd lcd;
 extern RTC_DS3231 rtc;
@@ -46,7 +59,7 @@ extern RTC_DS3231 rtc;
 
 void initKeypad() {
   for (byte i = 0; i < CODE_LENGTH; i++) {
-    PASSCODE[i] = char( EEPROM.read(i));  // Initialize the passcode with zeros
+    PASSCODE[i] = char( EEPROM.read(PASSWORD_ADDR + i));  // Initialize the passcode with zeros
   }
   PASSCODE[CODE_LENGTH] = '\0';  // Null-terminate the string
 
@@ -60,7 +73,7 @@ void initKeypad() {
   if (!valid){
     strcpy(PASSCODE, "123456");  // Default passcode if EEPROM is invalid
     for (byte i = 0; i < CODE_LENGTH; i++) {
-      EEPROM.update(i, PASSCODE[i]);  // Save the default passcode to EEPROM
+      EEPROM.update(PASSWORD_ADDR + i, PASSCODE[i]);  // Save the default passcode to EEPROM
     }
   }
 }
@@ -229,7 +242,7 @@ void adminPassword() {
  }
   strcpy(PASSCODE, newPin);
   for (byte i = 0; i < CODE_LENGTH; i++) {
-    EEPROM.update(i, PASSCODE[i]);
+    EEPROM.update(PASSWORD_ADDR + i, PASSCODE[i]);
   }
 
   lcd.clear();
@@ -242,9 +255,7 @@ void adminPassword() {
   enterAdminMode();  //return to admin mode
 }
 
-void adminCard() {
 
-}
 
 void adminExit() {
     lcd.clear();
@@ -272,7 +283,7 @@ void adminReset() {
     delay(2200); // Wait for 2.5 seconds
     strcpy(PASSCODE, "123456");  // Default passcode if EEPROM is invalid
     for (byte i = 0; i < CODE_LENGTH; i++) {
-      EEPROM.update(i, PASSCODE[i]);  // Save the default passcode to EEPROM
+      EEPROM.update(PASSWORD_ADDR + i, PASSCODE[i]);  // Save the default passcode to EEPROM
     }
     enterAdminMode();  //return to admin mode
 }
@@ -461,4 +472,95 @@ void adminDate() {
  }
 
 
- 
+ void CardMenu() {
+  lcd.clear();
+
+  lcd.setCursor(0, 0);
+  lcd.write(byte(1));  
+  lcd.print("ID    ");
+  lcd.write(byte(2));
+  lcd.print("ID");  
+
+  lcd.setCursor(0, 1);
+  lcd.write(byte(3));  
+  lcd.print("Reset");
+  lcd.write(byte(4));  
+  lcd.print("Exit");
+
+}
+
+void adminCard() {
+  CardMenu();
+  while (true) {
+    char k = getKeyPressed();
+    if (k) {
+      tone(2, 586, 100);
+    }
+    if (k == '1') {
+      IDCard1();
+      return;
+    } else if (k == '2') {
+      IDCard2();
+      return;
+    } else if (k == '3') {
+      IDCard3();
+      return;
+    } else if (k == '4') {
+      IDCard4();
+      return;
+    } else if (k == '5') {
+
+      return;
+    } else if (k == '6') {
+      break;
+    }
+  }
+}
+
+void IDCard1() {
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Please Scan Card");
+  lcd.setCursor(0, 1);
+  lcd.print("   to Update:   ");
+
+
+  while (!myRFID.PICC_IsNewCardPresent() || !myRFID.PICC_ReadCardSerial()) {
+    // wait here until card is scanned
+  }
+  char uidString[CARD_SIZE + 1];
+  int len = myRFID.uid.size; // UID length in bytes
+  for (int i = 0; i < len && i < CARD_SIZE / 2; i++) {
+    sprintf(&uidString[i*2], "%02X", myRFID.uid.uidByte[i]);
+  }
+  uidString[len*2] = '\0';  // null terminate
+
+  // Save to EEPROM
+  int addr = CARD1_ADDR;
+  for (int i = 0; i < CARD_SIZE; i++) {
+    char c = (i < len*2) ? uidString[i] : '\0';
+    EEPROM.update(addr + i, c);
+}
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("+     Card     +");
+  lcd.setCursor(0, 1);
+  lcd.print("+    Saved!    +");
+  tone(2, 660, 200);
+  delay(200);
+  tone(2, 880, 700);
+  delay(2200);
+  adminCard();  // Return to card menu
+}
+
+void IDCard2() {
+
+}
+
+void IDCard3() {
+
+}
+
+void IDCard4() {
+
+}
