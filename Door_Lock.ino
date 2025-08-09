@@ -9,6 +9,7 @@ void setup() {
   initRFID(); // Initialize the RFID reader
   TimeDateTempsetup();
   initKeypad();
+  delay(50);
   setupLock();  // Initialize the lock system
   LCDsetup(); // Initialize the LCD
 }

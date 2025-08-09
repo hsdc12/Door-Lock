@@ -8,7 +8,7 @@
 #include <SPI.h>
 #include <MFRC522.h>
 
-
+extern bool firstRun;
 extern MFRC522 myRFID;
 
 // Define the keymap (4x3 for standard keypad)
@@ -370,7 +370,7 @@ void adminTime() {
           delay(200);
           tone(2, 880, 700);
           delay(2200); 
-          
+          firstRun  = true;
           X = 0; 
         }
       }
@@ -524,7 +524,8 @@ void adminCard() {
       IDReset();
       return;
     } else if (k == '6') {
-      break;  // Exit card menu
+      enterAdminMode();
+      return;  // Exit card menu
     }
   }
 }
@@ -900,7 +901,7 @@ void adminResetInit() {
           lcd.setCursor(0, 1);   
           lcd.print("+              +");
           delay(1000); 
-          
+          firstRun = true;
           X = 0; 
         }
       }
