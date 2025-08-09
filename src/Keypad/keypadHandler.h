@@ -14,6 +14,7 @@ void enterAdminMode(); // Allows setting a new passcode
     void adminTime();
     void adminDate();
     void adminReset();
+        void adminResetInit(); // Resets the device to factory settings
     void adminCard();
         void CardMenu(); // Allows setting a new card
             void IDCard1(); // Allows setting a new card
