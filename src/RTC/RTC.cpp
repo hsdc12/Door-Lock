@@ -98,14 +98,26 @@ void BigBenChime() {
     delay(phrasePause);
   }
   
-  // Hour strikes (1–12)
-  uint8_t strikeCount = lastHour % 12 == 0 ? 12 : lastHour % 12;
-  for (uint8_t i = 0; i < strikeCount; i++) {
+
+if (lastHour < 13) {
+  uint8_t strikeCount = lastHour;
+  for (uint8_t i = 0; i <= strikeCount; i++) {
     tone(2, 440, strikeDuration);
     delay(strikeDuration);
     noTone(2);
     delay(strikePause);
   }
+}
+
+if (lastHour > 12) {
+  uint8_t strikeCount = lastHour - 12; // Adjust for 12-hour format
+  for (uint8_t i = 0; i <= strikeCount; i++) {
+    tone(2, 440, strikeDuration);
+    delay(strikeDuration);
+    noTone(2);
+    delay(strikePause);
+  }
+}
 
   noTone(2);
   lcd.clear();

@@ -8,4 +8,8 @@ void initRFID();
 
 void handleRFID();
 
+void AuthorizedAccess();
+
+void readStoredCard(int cardNumber, char* buffer);
+
 #endif  // RFID_H
