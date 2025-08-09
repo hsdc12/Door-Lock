@@ -358,7 +358,7 @@ void adminTime() {
                               now.day(),
                               newHour,
                               newMinute,
-                              now.second()));
+                              0));
           timeReady = true;
 
           lcd.clear();
