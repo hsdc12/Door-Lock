@@ -35,6 +35,9 @@ char inputBuffer[CODE_LENGTH + 1];  // extra byte for the string terminator
 byte inputPos = 0;
 const char ADMIN_PASSCODE[CODE_LENGTH + 1] = "654321"; // Default passcode
 
+const char HOUR_CHIME[CODE_LENGTH + 1] = "610016"; // Default passcode
+bool hourChimeEnabled = true; // Flag to enable/disable hour chime
+
 char timeInput[6];  // HHMM + null + spare
 int inputIndex = 0;
 bool timeReady = false;
@@ -117,6 +120,28 @@ void checkCode() {
     noTone(2);  
 
   }
+    if(strcmp(inputBuffer, HOUR_CHIME) == 0) {
+      if (hourChimeEnabled != true) {
+        lcd.clear();
+        lcd.setCursor(0, 0);
+        lcd.print("   Hour Chime    ");
+        lcd.setCursor(0, 1);
+        lcd.print("    Enabled!     ");
+        hourChimeEnabled = true;
+        delay(2000);
+
+      }
+      else {
+        lcd.clear();
+        lcd.setCursor(0, 0);
+        lcd.print("   Hour Chime    ");
+        lcd.setCursor(0, 1);
+        lcd.print("    Disabled!    ");
+        hourChimeEnabled = false;
+        delay(2000);
+      }
+    }
+
   else {
     lcd.setCursor(0, 0);
     lcd.print("           ");

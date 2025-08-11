@@ -23,6 +23,7 @@ const unsigned long strikeDuration = 1000;
 const unsigned long strikePause    = 1500;
 byte lastHour = 343; // Set to an impossible hour initially
 bool firstRun = true; // Flag to indicate if it's the first run
+extern bool hourChimeEnabled; // Flag to enable/disable hour chime
 
 RTC_DS3231 rtc;
 extern rgb_lcd lcd; // Declare the rgb_lcd object
@@ -69,11 +70,12 @@ void TimeDateTempvoid() {
 
 
   if (now.hour() != lastHour) {
-    if (!firstRun) {
+    lastHour  = now.hour();
+    if (firstRun == false && hourChimeEnabled == true) {
       BigBenChime();
     }
     firstRun  = false;
-    lastHour  = now.hour();
+
   }
 }
 
@@ -99,9 +101,9 @@ void BigBenChime() {
   }
   
 
-if (lastHour < 13) {
+if (lastHour <= 12) {
   uint8_t strikeCount = lastHour;
-  for (uint8_t i = 0; i <= strikeCount; i++) {
+  for (uint8_t i = 0; i < strikeCount; i++) {
     tone(2, 440, strikeDuration);
     delay(strikeDuration);
     noTone(2);
@@ -109,9 +111,9 @@ if (lastHour < 13) {
   }
 }
 
-if (lastHour > 12) {
+if (lastHour >= 13) {
   uint8_t strikeCount = lastHour - 12; // Adjust for 12-hour format
-  for (uint8_t i = 0; i <= strikeCount; i++) {
+  for (uint8_t i = 0; i < strikeCount; i++) {
     tone(2, 440, strikeDuration);
     delay(strikeDuration);
     noTone(2);
