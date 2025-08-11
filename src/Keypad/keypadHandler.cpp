@@ -101,7 +101,7 @@ void checkCode() {
     return;
   }
 
-  if (strcmp(inputBuffer, PASSCODE) == 0) {
+  else if (strcmp(inputBuffer, PASSCODE) == 0) {
     lcd.setCursor(0, 0);
     lcd.print("           ");
     lcd.setCursor(0, 0);   
@@ -120,7 +120,7 @@ void checkCode() {
     noTone(2);  
 
   }
-    if(strcmp(inputBuffer, HOUR_CHIME) == 0) {
+    else if(strcmp(inputBuffer, HOUR_CHIME) == 0) {
       if (hourChimeEnabled != true) {
         lcd.clear();
         lcd.setCursor(0, 0);
@@ -129,6 +129,7 @@ void checkCode() {
         lcd.print("    Enabled!     ");
         hourChimeEnabled = true;
         delay(2000);
+        return;
 
       }
       else {
@@ -139,6 +140,7 @@ void checkCode() {
         lcd.print("    Disabled!    ");
         hourChimeEnabled = false;
         delay(2000);
+        return;
       }
     }
 
