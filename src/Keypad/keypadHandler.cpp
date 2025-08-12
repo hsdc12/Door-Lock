@@ -36,7 +36,7 @@ byte inputPos = 0;
 const char ADMIN_PASSCODE[CODE_LENGTH + 1] = "654321"; // Default passcode
 
 const char HOUR_CHIME[CODE_LENGTH + 1] = "610016"; // Default passcode
-bool hourChimeEnabled = true; // Flag to enable/disable hour chime
+bool hourChimeEnabled = false; // Flag to enable/disable hour chime
 
 char timeInput[6];  // HHMM + null + spare
 int inputIndex = 0;
