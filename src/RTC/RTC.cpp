@@ -40,7 +40,7 @@ void TimeDateTempvoid() {
     lcd.setCursor(12, 0);
     lcd.print("    "); // Clear previous temperature
     lcd.setCursor(12, 0);
-    lcd.print(tempC, 0); // Print temperature in Celsius
+    lcd.print((tempC - 2), 0); // Print temperature in Celsius
     lcd.write(0xDF); // Degree symbol
     lcd.print("C");
     //
