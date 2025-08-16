@@ -78,7 +78,7 @@ void handleRFID() {
     delay(600); // Wait for 600 milliseconds
 
     lcd.setCursor(0, 0);
-    lcd.print("           ");
+    lcd.print("PW______   ");
     lcd.setCursor(0, 0);  //clear text
   }
 }
@@ -102,7 +102,7 @@ void AuthorizedAccess() {
     noTone(2);
 
     lcd.setCursor(0, 0);
-    lcd.print("           ");
+    lcd.print("PW______   ");
     lcd.setCursor(0, 0);   //clears the text after door lock cycle
 }
 

@@ -12,6 +12,8 @@ void setup() {
   delay(50);
   setupLock();  // Initialize the lock system
   LCDsetup(); // Initialize the LCD
+  lcd.setCursor(0, 0);
+  lcd.print("PW______");
 }
 
 

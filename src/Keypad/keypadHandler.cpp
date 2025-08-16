@@ -163,18 +163,21 @@ void keypadloop() {
   if (k == '*') {                   // Reset input
     inputPos = 0;
     lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("PW______   ");
     return;
   }
   if (k == '#') {
     inputBuffer[inputPos] = '\0';   // terminate the C-string
     checkCode();
     inputPos = 0;
-    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("PW______   ");  // Clear the input line
     return;
   }
    if (inputPos < CODE_LENGTH && isDigit(k)) {
     inputBuffer[inputPos++] = k;
-    lcd.setCursor(inputPos - 1, 0);
+    lcd.setCursor(inputPos + 1, 0);
     lcd.print('*');
   }
 }
