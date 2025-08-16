@@ -25,20 +25,21 @@ void initRFID() {
   noTone(2); // Stop any tone that might be playing
   SPI.begin();      // Initiate  SPI bus
   myRFID.PCD_Init();   // Initiate MFRC522
+  myRFID.PCD_SetAntennaGain(MFRC522::PCD_RxGain::RxGain_max); // Set the antenna gain to maximum
 }
 
 
 void handleRFID() {
+
      // Wait for RFID cards to be scanned
   if ( ! myRFID.PICC_IsNewCardPresent()) 
   {
-
     return;
   }
   // an RFID card has been scanned but no UID 
   if ( ! myRFID.PICC_ReadCardSerial()) 
   {
-    
+
     return;
   }
   char scannedID[CARD_SIZE + 1];
