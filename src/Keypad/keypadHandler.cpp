@@ -129,6 +129,7 @@ void checkCode() {
         lcd.print("    Enabled!     ");
         hourChimeEnabled = true;
         delay(2000);
+        lcd.clear();
         return;
 
       }
@@ -140,6 +141,7 @@ void checkCode() {
         lcd.print("    Disabled!    ");
         hourChimeEnabled = false;
         delay(2000);
+        lcd.clear();
         return;
       }
     }
@@ -164,7 +166,7 @@ void keypadloop() {
     inputPos = 0;
     lcd.clear();
     lcd.setCursor(0, 0);
-    lcd.print("PW______   ");
+    lcd.print("PIN:______  ");
     return;
   }
   if (k == '#') {
@@ -172,12 +174,12 @@ void keypadloop() {
     checkCode();
     inputPos = 0;
     lcd.setCursor(0, 0);
-    lcd.print("PW______   ");  // Clear the input line
+    lcd.print("PIN:______  ");  // Clear the input line
     return;
   }
    if (inputPos < CODE_LENGTH && isDigit(k)) {
     inputBuffer[inputPos++] = k;
-    lcd.setCursor(inputPos + 1, 0);
+    lcd.setCursor(inputPos + 3, 0);
     lcd.print('*');
   }
 }

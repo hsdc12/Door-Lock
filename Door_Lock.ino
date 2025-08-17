@@ -13,7 +13,7 @@ void setup() {
   setupLock();  // Initialize the lock system
   LCDsetup(); // Initialize the LCD
   lcd.setCursor(0, 0);
-  lcd.print("PW______");
+  lcd.print("PIN:______  ");
 }
 
 
