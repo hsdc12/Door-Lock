@@ -30,9 +30,6 @@ extern rgb_lcd lcd; // Declare the rgb_lcd object
 
 void TimeDateTempsetup() {
     rtc.begin();
-  if (rtc.lostPower()) {
-    rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
-}
 }
 
 void TimeDateTempvoid() {
